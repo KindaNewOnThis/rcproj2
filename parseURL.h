@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#define MAX_STR_LEN 2048
+#define MAX_STR_LEN 254
 
 typedef struct{
 char* user;

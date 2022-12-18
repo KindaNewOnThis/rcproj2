@@ -20,6 +20,7 @@ char* readServerResponse (int sockfd){
     /*while (buf != '\n'){ é melhor ler assim ou ler carater a carater até ser newline?*/
     	/*printf("BBBBBBBBBBB\n");*/
         bytes += read (sockfd, responseCode, MAX_STR_LEN);
+        printf("BBBBBBBBBBBB\n");
         /*printf("CCCCCCCCCCC\n");*/
         /*printf("digit received = %c\n", buf);*/
         /*responseCode[i] = buf;*/
@@ -92,6 +93,8 @@ int getFile(char* filename){
     
     while (bytesRead = read(info->data_sockfd, message, 1) > 0){
     
+    	printf("bytesRead = %d\n", bytesRead);
+    
     	totalBytesRead += bytesRead;    
         fseek(filefd, 0, SEEK_END);
         fwrite(message, sizeof(unsigned char), bytesRead, filefd);
@@ -110,25 +113,35 @@ int sendRetrCommand(int sockfd){
     memset(serverResponseCode, 0, MAX_STR_LEN);
     serverResponseCode = readServerResponse(sockfd);
     printf("server response code = %s", serverResponseCode);
-   
-
-    while (serverResponseCode[0] == '1'){
-        char* serverResponseCode = (char*) malloc(MAX_STR_LEN);
-    	memset(serverResponseCode, 0, MAX_STR_LEN);
-    	serverResponseCode = readServerResponse(sockfd);
-    	printf("server response code = %s", serverResponseCode);
-    	
-    	if (serverResponseCode[0] == '2'){
-    	    break;
-        }
-    }
+    
+    int totalBytesRead;
     
     char* filename = (char*) malloc(MAX_STR_LEN);
     filename = getFileName();
     printf("filename: %s\n", filename);
+    totalBytesRead += getFile(filename);
+       
+
+    while (serverResponseCode[0] == '1'){
+        char* serverResponseCode = (char*) malloc(MAX_STR_LEN);
+    	memset(serverResponseCode, 0, MAX_STR_LEN);
+    	printf("AAAAAAAAAAAAA\n");
+    	serverResponseCode = readServerResponse(sockfd);
+    	printf("AAAAAAAAAAAAA\n");
+    	printf("server response code = %s", serverResponseCode);
+    	printf("AAAAAAAAAAAAA\n");
+    	
+    	if (serverResponseCode[0] == '2'){
+    	    break;
+        }
+        
+        char* filename = (char*) malloc(MAX_STR_LEN);
+    	filename = getFileName();
+    	printf("filename: %s\n", filename);
+    	
+    	totalBytesRead += getFile(filename);
+    }
     
-    int totalBytesRead;
-    totalBytesRead = getFile(filename);
     
     close(info->data_sockfd);
     	
