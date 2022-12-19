@@ -14,21 +14,10 @@ char* readServerResponse (int sockfd){
     memset(responseCode, 0, MAX_STR_LEN);
     int state;
     int i = 0;
+   
+    bytes += read (sockfd, responseCode, MAX_STR_LEN);
+    i++;
     
-    /*printf("BBBBBBBBBBB\n");*/
-    
-    /*while (buf != '\n'){ é melhor ler assim ou ler carater a carater até ser newline?*/
-    	/*printf("BBBBBBBBBBB\n");*/
-        bytes += read (sockfd, responseCode, MAX_STR_LEN);
-        printf("BBBBBBBBBBBB\n");
-        /*printf("CCCCCCCCCCC\n");*/
-        /*printf("digit received = %c\n", buf);*/
-        /*responseCode[i] = buf;*/
-        /*printf("intermidiate response code = %s\n", responseCode);*/
-        i++;
-    //}
-    
-    /*printf("response code = %s\n", responseCode);*/
     return responseCode;
 }
 
@@ -93,8 +82,6 @@ int getFile(char* filename){
     
     while (bytesRead = read(info->data_sockfd, message, 1) > 0){
     
-    	printf("bytesRead = %d\n", bytesRead);
-    
     	totalBytesRead += bytesRead;    
         fseek(filefd, 0, SEEK_END);
         fwrite(message, sizeof(unsigned char), bytesRead, filefd);
@@ -125,12 +112,9 @@ int sendRetrCommand(int sockfd){
     while (serverResponseCode[0] == '1'){
         char* serverResponseCode = (char*) malloc(MAX_STR_LEN);
     	memset(serverResponseCode, 0, MAX_STR_LEN);
-    	printf("AAAAAAAAAAAAA\n");
     	serverResponseCode = readServerResponse(sockfd);
-    	printf("AAAAAAAAAAAAA\n");
     	printf("server response code = %s", serverResponseCode);
-    	printf("AAAAAAAAAAAAA\n");
-    	
+
     	if (serverResponseCode[0] == '2'){
     	    break;
         }
@@ -162,7 +146,6 @@ int sendPasvCommand(int sockfd){
     
     
     if (serverResponseCode[0] != '2'){
-    	/*printf("DAKDAKPDKAPDKAWPDKWA\n");*/
     	return 1;
     }
     else{
@@ -235,25 +218,7 @@ int server_connection(int port, int receivesResponse){
         perror("connect()");
         exit(-1);
     }
-    
-    /*send a string to the server
-    bytes = write(sockfd, buf, strlen(buf));
-    
-    if (bytes > 0){
-        printf("Bytes escritos %ld\n", bytes);
-    }
-        
-    else {
-        perror("write()");
-        exit(-1);
-    }
-
-    if (close(sockfd) < 0) {
-        perror("close()");
-        exit(-1);
-    }*/
-    
-    
+       
     if (receivesResponse){
         char* serverResponseCode = (char*) malloc(MAX_STR_LEN);
         memset(serverResponseCode, 0, MAX_STR_LEN);
@@ -273,10 +238,9 @@ int server_connection(int port, int receivesResponse){
 
 int main(int argc, char** argv){
     if((info = parseURL(argv[1])) == NULL){
-    	printf("sum aint right");
+    	printf("error parsing the URL");
     }
     else{
-    	printf("issall good\n");
         printf("username = %s\n", info->user);
     	printf("password = %s\n", info->password);
     	printf("host = %s\n", info->host);
